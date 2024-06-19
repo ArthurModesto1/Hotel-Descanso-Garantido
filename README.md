@@ -8,10 +8,10 @@ excel e cadernos, o que tem gerado diversos problemas para a organização. Sem 
 vezes um mesmo quarto é reservado para mais de um cliente. Diante dos problemas vividos pela
 Descanso Garantido, o hotel resolveu contratar uma empresa desenvolvedora de sistemas.
 Sendo assim, é necessário compreender a real necessidade do hotel e desenvolver um software
-específico.
+específico.<br/>
 
-Esse é um trabalho realizado na disciplina de Algoritmos e Estruturas de Dados I na PUC Minas.
-Alunos: Arthur Modesto Couto e David Olinda Pomine.
-Professor: Ivan Luiz Vieira de Araújo.
-Disciplina: Algoritmos e Estruturas de Dados I.
-Curso: Engenharia de Software.
+Esse é um trabalho realizado na disciplina de Algoritmos e Estruturas de Dados I na PUC Minas.<br/>
+Alunos: Arthur Modesto Couto e David Olinda Pomine.<br/>
+Professor: Ivan Luiz Vieira de Araújo.<br/>
+Disciplina: Algoritmos e Estruturas de Dados I.<br/>
+Curso: Engenharia de Software.<br/>
