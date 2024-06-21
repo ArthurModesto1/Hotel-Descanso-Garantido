@@ -10,6 +10,7 @@ Descanso Garantido, o hotel resolveu contratar uma empresa desenvolvedora de sis
 Sendo assim, é necessário compreender a real necessidade do hotel e desenvolver um software
 específico.<br/>
 
+# Descrição
 Esse é um trabalho realizado na disciplina de Algoritmos e Estruturas de Dados I na PUC Minas.<br/>
 Alunos: Arthur Modesto Couto e David Olinda Pomine.<br/>
 Professor: Ivan Luiz Vieira de Araújo.<br/>
