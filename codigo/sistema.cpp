@@ -3,6 +3,7 @@
 #include <string.h>
 #include <cstring>
 #include <ctime>
+#include <vector>
 using namespace std;
 
 class Cliente {
@@ -26,9 +27,27 @@ public:
             setEndereco(e);
         }
 
-        if(!t.empty() && t.length() == 11){
+        if(!t.empty() && t.length() <= 11){
             setTelefone(t);
         }
+
+        FILE *arquivo;
+        arquivo = fopen("arquivos/Clientes.txt", "a");
+
+        if(arquivo == NULL){
+            cout << "Erro ao abrir o arquivo!";
+        }
+
+        fprintf(arquivo, "Codigo: %d - Nome: %s - Endereco: %s - Telefone: %s\n", getCodigo(), getNome(), getEndereco(), getTelefone());
+
+        fclose(arquivo);
+    }
+
+    void exibirClientes(){
+        cout <<"Codigo: " << getCodigo() << endl;
+        cout << "Nome: " << getNome() << endl;
+        cout << "Endereco: " << getEndereco() << endl;
+        cout << "Telefone: " << getTelefone() << endl;
     }
 
     void setCodigo(int cod){
@@ -278,31 +297,60 @@ public:
     }
 };
 
-int cadastrar_cliente(){
+string cadastrar_cliente(vector<Cliente>& clientes, int *codigo){
+    string nome;
+    string endereco;
+    string telefone;
+    
+    cout << "Digite o nome do cliente: ";
+    cin >> nome;
+    cout << "Digite o endereco do cliente: ";
+    cin >> endereco;
+    cout << "Digite o telefone do cliente: ";
+    cin >> telefone;
+
+    Cliente cliente(*codigo, nome, endereco, telefone);
+    clientes.push_back(cliente);
+
+    return "Cliente cadastrado com sucesso!";
+}
+
+string cadastrar_funcionario(vector<Funcionario>& funcionario, int *codigo){
+    float salario;
+    string nome, cargo, telefone;
+
+    cout << "Digite o nome do funcionario: ";
+    cin >> nome;
+    cout << "Digite o salario do funcionario: ";
+    cin >> salario;
+    cout << "Digite o cargo do funcionario: ";
+    cin >> cargo;
+    cout << "Digite o telefone do funcionario: ";
+    cin >> telefone;
+
+    Funcionario novoFuncionario(*codigo, salario, nome, cargo, telefone);
+    funcionario.push_back(novoFuncionario);
+    return "Funcionário cadastrado com sucesso!";
 
 }
 
-int cadastrar_funcionario(){
+string cadastrar_estadia(){
 
 }
 
-int cadastrar_estadia(){
+string finalizar_estadia(){
 
 }
 
-float finalizar_estadia(){
+char pesquisa(const vector<Cliente>& clientes){
 
 }
 
-char pesquisa(){
+string mostrar_estadia(){
 
 }
 
-char mostrar_estadia(){
-
-}
-
-int pontos_fidelidade(){
+string pontos_fidelidade(){
 
 }
 
@@ -322,41 +370,49 @@ void menu(){
 }
 
 int main(){ 
+    vector<Cliente> clientes;
+    vector<Funcionario> funcionarios;
+    vector<Estadia> estadias;
+    vector<Quarto> quartos;
 
-   int opcao;
+    int opcao;
+    int cod;
 
-   do{
+
+    do{
     menu();
-    cin >> opcao;
-    switch (opcao){
-    case 1:
-        cadastrar_cliente();
-        break;
-    case 2:
-        cadastrar_funcionario();
-        break;
-    case 3:
-        cadastrar_estadia();
-        break;
-    case 4:
-        finalizar_estadia();
-        break;
-    case 5:
-        pesquisa();
-        break;
-    case 6:
-        mostrar_estadia();
-        break;
-    case 7:
-        cout << "Obrigado por usar o sistema!" << endl;
-        break;
-      
-    default:
-        cout << "Opcao invalida!" << endl;
-        break;
-      }
-   }while(opcao != 7);   	
+        cin >> opcao;
+        switch (opcao){
+        case 1:
+            cadastrar_cliente(clientes, &cod);
+            cod++;
+            break;
+        case 2:
+            cadastrar_funcionario(funcionarios, &cod);
+            cod++;
+            break;
+        case 3:
+            cadastrar_estadia();
+            break;
+        case 4:
+            finalizar_estadia();
+            break;
+        case 5:
+            pesquisa(clientes);
+            break;
+        case 6:
+            mostrar_estadia();
+            break;
+        case 7:
+            cout << "Obrigado por usar o sistema!" << endl;
+            break;
+        
+        default:
+            cout << "Opcao invalida!" << endl;
+            break;
+        }
+    }while(opcao != 7);   	
+    
    
-   
-   return 0;
+    return 0;
 }
