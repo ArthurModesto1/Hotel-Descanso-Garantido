@@ -5,6 +5,7 @@
 #include <string.h>
 #include <cstring>
 #include <ctime>
+#include <vector>
 using namespace std;
 
 // Classe Funcionario para armazenar e manipular informações dos funcionários
@@ -278,28 +279,8 @@ public:
 string cadastrar_cliente(){
     
 }
-string cadastrar_funcionario(vector<Funcionario>& funcionarios) {
-    int codigo;
-    float salario;
-    string nome, cargo, telefone;
-
-    cout << "Digite o código do funcionário: ";
-    cin >> codigo;
-    cout << "Digite o nome do funcionário: ";
-    cin.ignore();
-    getline(cin, nome);
-    cout << "Digite o cargo do funcionário: ";
-    getline(cin, cargo);
-    cout << "Digite o salário do funcionário: R$ ";
-    cin >> salario;
-    cout << "Digite o telefone do funcionário: ";
-    cin.ignore();
-    getline(cin, telefone);
-
-    Funcionario novoFuncionario(codigo, salario, nome, cargo, telefone);
-    funcionarios.push_back(novoFuncionario);
-
-    return "Funcionário cadastrado com sucesso!";
+string cadastrar_funcionario() {
+    
 }
 string cadastrar_estadia();
 float finalizar_estadia();
