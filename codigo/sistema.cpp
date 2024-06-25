@@ -32,7 +32,7 @@ public:
         }
     
         FILE *arquivo;
-        arquivo = fopen("arquivos/Clientes.bin", "wb");
+        arquivo = fopen("Clientes.bin", "wb");
 
         if(arquivo == NULL){
             cout << "Erro ao abrir o arquivo!";
@@ -114,7 +114,7 @@ public:
         }
 
         FILE *arquivo;
-        arquivo = fopen("arquivos/Funcionarios.bin", "wb");
+        arquivo = fopen("Funcionarios.bin", "wb");
 
         if(arquivo == NULL){
             cout << "Erro ao abrir o arquivo!";
@@ -213,7 +213,7 @@ public:
         }
 
         FILE *arquivo;
-        arquivo = fopen("arquivos/Estadias.bin", "wb");
+        arquivo = fopen("Estadias.bin", "wb");
 
         if(arquivo == NULL){
             cout << "Erro ao abrir o arquivo!";
@@ -327,7 +327,7 @@ public:
         }
 
         FILE *arquivo;
-        arquivo = fopen("arquivos/Funcionarios.bin", "wb");
+        arquivo = fopen("Funcionarios.bin", "wb");
 
         if(arquivo == NULL){
             cout << "Erro ao abrir o arquivo!";
