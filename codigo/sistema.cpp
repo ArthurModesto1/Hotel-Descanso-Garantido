@@ -38,7 +38,7 @@ public:
             cout << "Erro ao abrir o arquivo!";
         }
 
-        fprintf(arquivo, "Codigo: %d - Nome: %s - Endereco: %s - Telefone: %s\n", getCodigo(), getNome(), getEndereco(), getTelefone());
+        fprintf(arquivo, "Codigo: %d - Nome: %s - Endereco: %s - Telefone: %s \n", getCodigo(), getNome(), getEndereco(), getTelefone());
 
         fclose(arquivo);
     }
@@ -120,7 +120,7 @@ public:
             cout << "Erro ao abrir o arquivo!";
         }
 
-        fprintf(arquivo, "Codigo: %d - Nome: %s - Salario: %.2f - Cargo: %s - Telefone: %s\n", getCodigo(), getNome(), getSalario(), getCargo(), getTelefone());
+        fprintf(arquivo, "Codigo: %d - Nome: %s - Salario: %.2f - Cargo: %s - Telefone: %s \n", getCodigo(), getNome(), getSalario(), getCargo(), getTelefone());
 
         fclose(arquivo);
     }
@@ -219,7 +219,7 @@ public:
             cout << "Erro ao abrir o arquivo!";
         }
 
-        fprintf(arquivo, "Codigo Estadia: %d - Quantidade de Diarias: %d - Codigo Cliente: %d - Data Entrada: %s - Data de saida: %s\n", getCodEstadia(), getQtdDiaria(), getCodCliente(), getDataEntrada(), getDataSaida());
+        fprintf(arquivo, "Codigo Estadia: %d - Quantidade de Diarias: %d - Codigo Cliente: %d - Data Entrada: %s - Data de saida: %s \n", getCodEstadia(), getQtdDiaria(), getCodCliente(), getDataEntrada(), getDataSaida());
 
         fclose(arquivo);
     }
@@ -327,13 +327,13 @@ public:
         }
 
         FILE *arquivo;
-        arquivo = fopen("Funcionarios.bin", "wb");
+        arquivo = fopen("Quartos.bin", "wb");
 
         if(arquivo == NULL){
             cout << "Erro ao abrir o arquivo!";
         }
 
-        fprintf(arquivo, "Quantidade hospede: %d - Numero do Quarto: %d - Valor Diaria: %.2f - Status: %s\n", getQtdHospede(), getNmrQuarto(), getValorDiaria(), getStatus());
+        fprintf(arquivo, "Quantidade hospede: %d - Numero do Quarto: %d - Valor Diaria: %.2f - Status: %s \n", getQtdHospede(), getNmrQuarto(), getValorDiaria(), getStatus());
 
         fclose(arquivo);
     }
@@ -541,7 +541,8 @@ string pesquisa(vector<Cliente*>& clientes, vector<Funcionario*>& funcionarios){
                 cout << "1.Codigo" << endl;
                 cout << "2.Nome" << endl;
                 int opcao2;
-                if(opcao == 1){
+                cin >> opcao2;
+                if(opcao2 == 1){
                     cout << "Digite o codigo do cliente: " << endl;
                     int cod;
                     cin >> cod;
@@ -552,7 +553,7 @@ string pesquisa(vector<Cliente*>& clientes, vector<Funcionario*>& funcionarios){
                         }
                     }
                 }
-                else if(opcao == 2){
+                else if(opcao2 == 2){
                     string name;
                     cout << "Digite o nome do cliente: " << endl;
                     cin >> name;
@@ -569,8 +570,9 @@ string pesquisa(vector<Cliente*>& clientes, vector<Funcionario*>& funcionarios){
                 cout << "Deseja digitar o codigo ou o nome do funcionario: " << endl;
                 cout << "1.Codigo" << endl;
                 cout << "2.Nome" << endl;
-                int opcao2;
-                if(opcao == 1){
+                int opcao3;
+                cin >> opcao3;
+                if(opcao3 == 1){
                     cout << "Digite o codigo do funcionario: " << endl;
                     int cod;
                     cin >> cod;
@@ -581,7 +583,7 @@ string pesquisa(vector<Cliente*>& clientes, vector<Funcionario*>& funcionarios){
                         }
                     }
                 }
-                else if(opcao == 2){
+                else if(opcao3 == 2){
                     string name;
                     cout << "Digite o nome do funcionario: " << endl;
                     cin >> name;
@@ -619,9 +621,11 @@ string mostrar_estadia(vector<Estadia*> estadias){
         }
     }
 
-    if(temEstadia){
-        return "As estadias do cliente foram mostradas!\n";
+    if(!temEstadia){
+        return "As estadias do cliente nao foram mostradas\n";
     }
+
+    return "As estadias do cliente  foram mostradas\n";
 }
 
 string pontos_fidelidade(vector<Estadia*> estadias){
@@ -635,6 +639,8 @@ string pontos_fidelidade(vector<Estadia*> estadias){
             break;
         }
     }
+
+    cout << "Os pontos sao: " << pontos << endl;
 
     return "Pontos calculados com sucesso!\n";
 }
@@ -650,7 +656,8 @@ void menu(){
     cout << "5. Finalizar Estadia" << endl;
     cout << "6. Pesquisa de Clientes ou Funcionarios" << endl;
     cout << "7. Mostrar Estadia" << endl;
-    cout << "8. SAIR" << endl;
+    cout << "8. Mostrar Pontos de Fidelidade" << endl;
+    cout << "9. SAIR" << endl;
     cout << "-------------------------------------------" << endl;
     cout << "Escolha sua opcao: " << endl;
 }
@@ -719,6 +726,5 @@ int main(){
         delete quarto;
     }
     
-   
     return 0;
 }
