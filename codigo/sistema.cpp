@@ -30,9 +30,9 @@ public:
         if(!t.empty() && t.length() <= 11){
             setTelefone(t);
         }
-
+    
         FILE *arquivo;
-        arquivo = fopen("arquivos/Clientes.txt", "aw");
+        arquivo = fopen("arquivos/Clientes.bin", "wb");
 
         if(arquivo == NULL){
             cout << "Erro ao abrir o arquivo!";
@@ -114,7 +114,7 @@ public:
         }
 
         FILE *arquivo;
-        arquivo = fopen("arquivos/Funcionarios.txt", "aw");
+        arquivo = fopen("arquivos/Funcionarios.bin", "wb");
 
         if(arquivo == NULL){
             cout << "Erro ao abrir o arquivo!";
@@ -184,8 +184,10 @@ private:
     int nmr_quarto;
     tm data_entrada;
     tm data_saida;
+    string data_en;
+    string data_sai;
 public:
-    Estadia(int ce, int qd, int cc, int nq, tm de, tm ds){
+    Estadia(int ce, int qd, int cc, int nq, string de, string ds){
         if(ce > 0){
             setCodEstadia(ce);
         }
@@ -202,16 +204,16 @@ public:
             setNmrQuarto(nq);
         }
 
-        if(!de.tm_year == 0 && !de.tm_mon == 0 && !de.tm_mday == 0){
+        if(!de.empty()){
             setDataEntrada(de);
         }
 
-        if(!ds.tm_year == 0 && !ds.tm_mon == 0 && !ds.tm_mday == 0){
+        if(!ds.empty()){
             setDataSaida(ds);
         }
 
         FILE *arquivo;
-        arquivo = fopen("arquivos/Estadias.txt", "aw");
+        arquivo = fopen("arquivos/Estadias.bin", "wb");
 
         if(arquivo == NULL){
             cout << "Erro ao abrir o arquivo!";
@@ -262,29 +264,41 @@ public:
         return nmr_quarto;
     }
 
-    void setDataEntrada(tm de){
-        this->data_entrada = de;
+    void setDataEntrada(string de){
+        this->data_en = de;
     }
 
     string getDataEntrada(){
         string data_stringada;
 
-        data_stringada+=to_string(data_entrada.tm_wday);
+        data_stringada+=to_string(data_entrada.tm_mday);
         data_stringada+='/';
         data_stringada+=to_string(data_entrada.tm_mon+1);
         data_stringada+='/';
         data_stringada+=to_string(data_entrada.tm_year+1900);
 
-
         return data_stringada;
     }
 
-    void setDataSaida(tm ds){
-        this->data_saida = ds;
+    void setDataSaida(string ds){
+        this->data_sai = ds;
     }
 
-    tm getDataSaida(){
-        return data_saida;
+    string getDataSaida(){
+        string data_stringadadois;
+
+        data_stringadadois+=to_string(data_saida.tm_mday);
+        data_stringadadois+='/';
+        data_stringadadois+=to_string(data_saida.tm_mon+1);
+        data_stringadadois+='/';
+        data_stringadadois+=to_string(data_saida.tm_year+1900);
+
+        return data_stringadadois;
+    }
+
+    int calcular_diarias(){
+        int nmr_diarias = (data_saida.tm_mday - data_entrada.tm_mday);
+        return nmr_diarias;
     }
 };
 
@@ -313,7 +327,7 @@ public:
         }
 
         FILE *arquivo;
-        arquivo = fopen("arquivos/Funcionarios.txt", "aw");
+        arquivo = fopen("arquivos/Funcionarios.bin", "wb");
 
         if(arquivo == NULL){
             cout << "Erro ao abrir o arquivo!";
@@ -372,8 +386,8 @@ string cadastrar_cliente(vector<Cliente*>& clientes, int *codigo){
     Cliente* cliente = new Cliente(*codigo, nome, endereco, telefone);
     clientes.push_back(cliente);
 
-    *codigo++;
-    return "Cliente cadastrado com sucesso!";
+    (*codigo)++;
+    return "Cliente cadastrado com sucesso!\n";
 }
 
 string cadastrar_funcionario(vector<Funcionario*>& funcionarios, int *codigo){
@@ -392,8 +406,8 @@ string cadastrar_funcionario(vector<Funcionario*>& funcionarios, int *codigo){
     Funcionario* funcionario =  new Funcionario(*codigo, salario, nome, cargo, telefone);
     funcionarios.push_back(funcionario);
 
-    *codigo++;
-    return "Funcionário cadastrado com sucesso!";
+    (*codigo)++;
+    return "Funcionário cadastrado com sucesso!\n";
 
 }
 
@@ -409,21 +423,20 @@ string cadastrar_quarto(vector<Quarto*>& quartos){
     cin >> nmr_quarto;
     cout << "Digite o valor da diaria: ";
     cin >> vlr_diaria;
-    cout << "Digite o status do quarto (Ocuapado ou desocupado): ";
-    cin >> status;
+    status = "desocupado";
 
     Quarto* quarto = new Quarto(qtd_hosp, nmr_quarto, vlr_diaria, status);
     quartos.push_back(quarto);
 
-    return "Quarto cadastrado com sucesso!";
+    return "Quarto cadastrado com sucesso!\n";
 }
 
 string cadastrar_estadia(vector<Estadia*>& estadias, vector<Quarto*>& quartos, vector<Cliente*>& clientes, int *codigo_estadia) {
     int qtd_diaria = 0;
     int codigo_cliente;
     int nmr_quarto;
-    tm data_entrada;
-    tm data_saida;
+    string data_entrada;
+    string data_saida;
 
     cout << "Digite o codigo do cliente que deseja fazer estadia: ";
     cin >> codigo_cliente;
@@ -434,15 +447,15 @@ string cadastrar_estadia(vector<Estadia*>& estadias, vector<Quarto*>& quartos, v
     bool existeCliente = false;
     bool existeQuarto = false;
 
-    for (const auto& cliente : clientes) {
+    for (auto& cliente : clientes) {
         if (cliente->getCodigo() == codigo_cliente) {
             existeCliente = true;
             break;
         }
     }
 
-    for (const auto& quarto : quartos) {
-        if (quarto->getNmrQuarto() == nmr_quarto) {
+    for (auto& quarto : quartos) {
+        if (quarto->getNmrQuarto() == nmr_quarto && quarto->getStatus() == "desocupado") {
             existeQuarto = true;
             break;
         }
@@ -460,18 +473,55 @@ string cadastrar_estadia(vector<Estadia*>& estadias, vector<Quarto*>& quartos, v
     cin >> data_entrada;
     cout << "Digite a data de saida da estadia estadia no formato: dd/mm/aaaa): ";
     cin >> data_saida;
-
-      
-
-    Estadia* estadia = new Estadia(*codigo_estadia, qtd_diaria, codigo_cliente, nmr_quarto, data_entrada, data_saida);
+    
+    Estadia* estadia;
+    qtd_diaria = estadia->calcular_diarias();
+    estadia = new Estadia(*codigo_estadia, qtd_diaria, codigo_cliente, nmr_quarto, data_entrada, data_saida);
     estadias.push_back(estadia);
 
-    *codigo_estadia++; 
-    return "Estadia cadastrada com sucesso!";
+    for (auto& quarto : quartos) {
+        if (quarto->getNmrQuarto() == nmr_quarto) {
+            quarto->setStatus("ocupado");
+            break;
+        }
+    }
+
+    (*codigo_estadia)++; 
+    return "Estadia cadastrada com sucesso!\n";
 }
 
 
-string finalizar_estadia(){
+string finalizar_estadia(vector<Estadia*>& estadias, vector<Quarto*> quartos){
+    int cod_cliente, cod_estadia;
+    cout << "Digite o codigo do cliente que deseja finalizar uma estadia: ";
+    cin >> cod_cliente;
+    cout << "Digite o codigo da estadia que sera finalizada: ";
+    cin >> cod_estadia;
+    
+
+    for(auto& estadia:estadias){
+        if(estadia-> getCodCliente() == cod_cliente && estadia ->getCodEstadia() == cod_estadia){
+            int nmr_diarias = estadia->getQtdDiaria(), nmr_quarto = estadia->getNmrQuarto();
+            float valot_total = 0, valor_diaria = 0;
+
+            for(auto& quarto: quartos){
+                if(quarto->getNmrQuarto() == nmr_quarto){
+                    valor_diaria = quarto->getValorDiaria();
+                    quarto->setStatus("desocupado");
+                    break;
+                }
+            }
+
+            valot_total = nmr_diarias * valor_diaria;
+
+            cout << "O valor total eh de: " << valot_total << " reais" << endl;
+
+
+            return "Estadia finalizada com sucesso!\n";
+        }
+    }
+
+    return "Estadia nao encontrada para o cliente especificado.\n";
 
 }
 
@@ -495,7 +545,7 @@ string pesquisa(vector<Cliente*>& clientes, vector<Funcionario*>& funcionarios){
                     cout << "Digite o codigo do cliente: " << endl;
                     int cod;
                     cin >> cod;
-                    for(const auto& cliente : clientes){
+                    for(auto& cliente : clientes){
                         if(cliente->getCodigo() == cod){
                             cliente->exibirClientes();
                             break;
@@ -506,7 +556,7 @@ string pesquisa(vector<Cliente*>& clientes, vector<Funcionario*>& funcionarios){
                     string name;
                     cout << "Digite o nome do cliente: " << endl;
                     cin >> name;
-                    for(const auto& cliente : clientes){
+                    for(auto& cliente : clientes){
                         if(cliente->getNome() == name){
                             cliente->exibirClientes();
                             break;
@@ -524,7 +574,7 @@ string pesquisa(vector<Cliente*>& clientes, vector<Funcionario*>& funcionarios){
                     cout << "Digite o codigo do funcionario: " << endl;
                     int cod;
                     cin >> cod;
-                    for(const auto& funcionario : funcionarios){
+                    for(auto& funcionario : funcionarios){
                         if(funcionario->getCodigo() == cod){
                             funcionario->exibirFuncionarios();
                             break;
@@ -535,7 +585,7 @@ string pesquisa(vector<Cliente*>& clientes, vector<Funcionario*>& funcionarios){
                     string name;
                     cout << "Digite o nome do funcionario: " << endl;
                     cin >> name;
-                    for(const auto& funcionario : funcionarios){
+                    for(auto& funcionario : funcionarios){
                         if(funcionario->getNome() == name){
                             funcionario->exibirFuncionarios();
                             break;
@@ -555,12 +605,38 @@ string pesquisa(vector<Cliente*>& clientes, vector<Funcionario*>& funcionarios){
     }while(opcao != 3);
 }
 
-string mostrar_estadia(vector<Cliente*> clientes, vector<Estadia*> estadias){
-    
+string mostrar_estadia(vector<Estadia*> estadias){
+    int cod_cliente;
+    cout << "Digite o codigo do cliente que deseja consultar as estadias:";
+    cin >> cod_cliente;
+    bool temEstadia = false;
+
+    for(auto& estadia: estadias){
+        if(estadia->getCodCliente() == cod_cliente){
+            estadia->exibirEstadias();
+            temEstadia= true;
+            break;
+        }
+    }
+
+    if(temEstadia){
+        return "As estadias do cliente foram mostradas!\n";
+    }
 }
 
-string pontos_fidelidade(){
+string pontos_fidelidade(vector<Estadia*> estadias){
+    int cod_cliente, pontos = 0;
+    cout << "Digite o codigo do cliente que deseja calcular os pontos de fidelidade:";
+    cin >> cod_cliente;
 
+    for(auto& estadia: estadias){
+        if(estadia->getCodCliente() == cod_cliente){
+            pontos = 10 * estadia->getQtdDiaria();
+            break;
+        }
+    }
+
+    return "Pontos calculados com sucesso!\n";
 }
 
 void menu(){
@@ -587,6 +663,7 @@ int main(){
 
     int opcao;
     int cod = 1;
+    int cod_func = 1;
     int cod_estadia = 1;
 
 
@@ -598,7 +675,7 @@ int main(){
             cadastrar_cliente(clientes, &cod);
             break;
         case 2:
-            cadastrar_funcionario(funcionarios, &cod);
+            cadastrar_funcionario(funcionarios, &cod_func);
             break;
         case 3:
             cadastrar_quarto(quartos);
@@ -607,15 +684,18 @@ int main(){
             cadastrar_estadia(estadias, quartos, clientes, &cod_estadia);
             break;
         case 5:
-            finalizar_estadia();
+            finalizar_estadia(estadias, quartos);
             break;
         case 6:
             pesquisa(clientes, funcionarios);
             break;
         case 7:
-            mostrar_estadia(clientes, estadias);
+            mostrar_estadia(estadias);
             break;
         case 8:
+            pontos_fidelidade(estadias);
+            break;
+        case 9:
             cout << "Obrigado por usar o sistema!" << endl;
             break;
         
@@ -623,7 +703,21 @@ int main(){
             cout << "Opcao invalida!" << endl;
             break;
         }
-    }while(opcao != 8);   	
+    }while(opcao != 9);   	
+
+
+    for (auto cliente : clientes) {
+        delete cliente;
+    }
+    for (auto funcionario : funcionarios) {
+        delete funcionario;
+    }
+    for (auto estadia : estadias) {
+        delete estadia;
+    }
+    for (auto quarto : quartos) {
+        delete quarto;
+    }
     
    
     return 0;
