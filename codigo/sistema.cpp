@@ -1,9 +1,8 @@
 #include <iostream>
-#include <string>
 #include <string.h>
-#include <cstring>
 #include <ctime>
 #include <vector>
+#include <fstream>
 using namespace std;
 
 class Cliente {
@@ -31,16 +30,15 @@ public:
             setTelefone(t);
         }
     
-        FILE *arquivo;
-        arquivo = fopen("Clientes.bin", "wb");
+        ofstream arquivo("Clientes.bin", ios::app);
 
-        if(arquivo == NULL){
-            cout << "Erro ao abrir o arquivo!";
+        if(!arquivo.is_open()){
+            cout << "Erro ao abrir o arquivo!" << endl;
         }
-
-        fprintf(arquivo, "Codigo: %d - Nome: %s - Endereco: %s - Telefone: %s \n", getCodigo(), getNome(), getEndereco(), getTelefone());
-
-        fclose(arquivo);
+        else{
+            arquivo << "Codigo: " << getCodigo() << " - Nome: " << getNome() << " - Endereco: " << getEndereco() << " - Telefone: " << getTelefone() << endl;
+            arquivo.close();
+        }
     }
 
     void exibirClientes(){
@@ -109,20 +107,19 @@ public:
             setCargo(c);
         }
 
-        if(!t.empty() && t.length() == 11){
+        if(!t.empty() && t.length() <= 11){
             setTelefone(t);
         }
 
-        FILE *arquivo;
-        arquivo = fopen("Funcionarios.bin", "wb");
+        ofstream arquivo("Funcionarios.bin", ios::app);
 
-        if(arquivo == NULL){
-            cout << "Erro ao abrir o arquivo!";
+        if(!arquivo.is_open()){
+            cout << "Erro ao abrir o arquivo!" << endl;
         }
-
-        fprintf(arquivo, "Codigo: %d - Nome: %s - Salario: %.2f - Cargo: %s - Telefone: %s \n", getCodigo(), getNome(), getSalario(), getCargo(), getTelefone());
-
-        fclose(arquivo);
+        else{
+            arquivo << "Codigo: " << getCodigo() << " - Salario: " << getSalario() << " - Nome: " << getNome() << " - Cargo: " << getCargo() << " - Telefone: " << getTelefone() << endl;
+            arquivo.close();
+        }
     }
 
     void exibirFuncionarios(){
@@ -212,16 +209,15 @@ public:
             setDataSaida(ds);
         }
 
-        FILE *arquivo;
-        arquivo = fopen("Estadias.bin", "wb");
+        ofstream arquivo("Estadias.bin", ios::app);
 
-        if(arquivo == NULL){
-            cout << "Erro ao abrir o arquivo!";
+        if(!arquivo.is_open()){
+            cout << "Erro ao abrir o arquivo!" << endl;
         }
-
-        fprintf(arquivo, "Codigo Estadia: %d - Quantidade de Diarias: %d - Codigo Cliente: %d - Data Entrada: %s - Data de saida: %s \n", getCodEstadia(), getQtdDiaria(), getCodCliente(), getDataEntrada(), getDataSaida());
-
-        fclose(arquivo);
+        else{
+            arquivo << "Codigo Estadia: " << getCodEstadia() << " - Quantidade de Diarias: " << getQtdDiaria() << " - Codigo do Cliente: " << getCodCliente() << " - Data de Entrada: " << getDataEntrada() << " - Data de Saida: " << getDataSaida() << endl;
+            arquivo.close();
+        }
     }
 
     void exibirEstadias(){
@@ -326,16 +322,15 @@ public:
             setStatus(stats);
         }
 
-        FILE *arquivo;
-        arquivo = fopen("Quartos.bin", "wb");
+        ofstream arquivo("Quartos.bin", ios::app);
 
-        if(arquivo == NULL){
-            cout << "Erro ao abrir o arquivo!";
+        if(!arquivo.is_open()){
+            cout << "Erro ao abrir o arquivo!" << endl;
         }
-
-        fprintf(arquivo, "Quantidade hospede: %d - Numero do Quarto: %d - Valor Diaria: %.2f - Status: %s \n", getQtdHospede(), getNmrQuarto(), getValorDiaria(), getStatus());
-
-        fclose(arquivo);
+        else{
+            arquivo << "Quantidade de Hospede: " << getQtdHospede() << " - Numero do Quarto: " << getNmrQuarto() << " - Valor Diaria: " << getValorDiaria() << " - Status: " << getStatus() << endl;
+            arquivo.close();
+        }
     }
 
     void setQtdHospede(int qh){
@@ -371,6 +366,7 @@ public:
     }
 };
 
+
 string cadastrar_cliente(vector<Cliente*>& clientes, int *codigo){
     string nome;
     string endereco;
@@ -378,10 +374,13 @@ string cadastrar_cliente(vector<Cliente*>& clientes, int *codigo){
     
     cout << "Digite o nome do cliente: ";
     cin >> nome;
+    cin.ignore();
     cout << "Digite o endereco do cliente: ";
     cin >> endereco;
+    cin.ignore();
     cout << "Digite o telefone do cliente: ";
     cin >> telefone;
+    cin.ignore();
 
     Cliente* cliente = new Cliente(*codigo, nome, endereco, telefone);
     clientes.push_back(cliente);
@@ -396,12 +395,16 @@ string cadastrar_funcionario(vector<Funcionario*>& funcionarios, int *codigo){
 
     cout << "Digite o nome do funcionario: ";
     cin >> nome;
+    cin.ignore();
     cout << "Digite o salario do funcionario: ";
     cin >> salario;
+    cin.ignore();
     cout << "Digite o cargo do funcionario: ";
     cin >> cargo;
+    cin.ignore();
     cout << "Digite o telefone do funcionario: ";
     cin >> telefone;
+    cin.ignore();
 
     Funcionario* funcionario =  new Funcionario(*codigo, salario, nome, cargo, telefone);
     funcionarios.push_back(funcionario);
@@ -557,6 +560,7 @@ string pesquisa(vector<Cliente*>& clientes, vector<Funcionario*>& funcionarios){
                     string name;
                     cout << "Digite o nome do cliente: " << endl;
                     cin >> name;
+                    cin.ignore();
                     for(auto& cliente : clientes){
                         if(cliente->getNome() == name){
                             cliente->exibirClientes();
@@ -587,6 +591,7 @@ string pesquisa(vector<Cliente*>& clientes, vector<Funcionario*>& funcionarios){
                     string name;
                     cout << "Digite o nome do funcionario: " << endl;
                     cin >> name;
+                    cin.ignore();
                     for(auto& funcionario : funcionarios){
                         if(funcionario->getNome() == name){
                             funcionario->exibirFuncionarios();
@@ -710,8 +715,8 @@ int main(){
             cout << "Opcao invalida!" << endl;
             break;
         }
-    }while(opcao != 9);   	
-
+        
+    }while(opcao != 9);
 
     for (auto cliente : clientes) {
         delete cliente;
@@ -725,6 +730,6 @@ int main(){
     for (auto quarto : quartos) {
         delete quarto;
     }
-    
+     
     return 0;
 }
