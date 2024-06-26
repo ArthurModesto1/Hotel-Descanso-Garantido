@@ -1,3 +1,6 @@
+//ALUNOS: ARTHUR MODESTO COUTO E DAVID OLINDA POMINE
+
+
 #include <iostream>
 #include <string.h>
 #include <string>
@@ -363,10 +366,12 @@ string cadastrar_funcionario(vector<Funcionario*>& funcionarios, int *codigo){
     string nome, cargo, telefone;
 
     cout << "Digite o nome do funcionario: ";
+    cin.ignore();
     getline(cin, nome);
     cout << "Digite o salario do funcionario: ";
     cin >> salario;
     cout << "Digite o cargo do funcionario: ";
+    cin.ignore();
     getline(cin, cargo);
     cout << "Digite o telefone do funcionario: ";
     cin >> telefone;
@@ -599,10 +604,10 @@ string mostrar_estadia(vector<Estadia*> estadias){
     }
 
     if(!temEstadia){
-        return "As estadias do cliente nao foram mostradas\n";
+        cout << "As estadias do cliente nao foram encontradas" << endl;
     }
 
-    return "As estadias do cliente  foram mostradas\n";
+    return "As estadias do cliente foram mostradas\n";
 }
 
 string pontos_fidelidade(vector<Estadia*> estadias){
