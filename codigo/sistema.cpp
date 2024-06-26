@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string.h>
+#include <string>
 #include <ctime>
 #include <vector>
 #include <fstream>
@@ -28,16 +29,6 @@ public:
 
         if(!t.empty() && t.length() <= 11){
             setTelefone(t);
-        }
-    
-        ofstream arquivo("Clientes.bin", ios::app);
-
-        if(!arquivo.is_open()){
-            cout << "Erro ao abrir o arquivo!" << endl;
-        }
-        else{
-            arquivo << "Codigo: " << getCodigo() << " - Nome: " << getNome() << " - Endereco: " << getEndereco() << " - Telefone: " << getTelefone() << endl;
-            arquivo.close();
         }
     }
 
@@ -110,16 +101,6 @@ public:
         if(!t.empty() && t.length() <= 11){
             setTelefone(t);
         }
-
-        ofstream arquivo("Funcionarios.bin", ios::app);
-
-        if(!arquivo.is_open()){
-            cout << "Erro ao abrir o arquivo!" << endl;
-        }
-        else{
-            arquivo << "Codigo: " << getCodigo() << " - Salario: " << getSalario() << " - Nome: " << getNome() << " - Cargo: " << getCargo() << " - Telefone: " << getTelefone() << endl;
-            arquivo.close();
-        }
     }
 
     void exibirFuncionarios(){
@@ -181,17 +162,13 @@ private:
     int nmr_quarto;
     tm data_entrada;
     tm data_saida;
-    string data_en;
-    string data_sai;
+
 public:
-    Estadia(int ce, int qd, int cc, int nq, string de, string ds){
+    Estadia(int ce, int cc, int nq, tm de, tm ds){
         if(ce > 0){
             setCodEstadia(ce);
         }
 
-        if(qd > 0){
-            setQtdDiaria(qd);
-        }
 
         if(cc > 0){
             setCodCliente(cc);
@@ -201,23 +178,11 @@ public:
             setNmrQuarto(nq);
         }
 
-        if(!de.empty()){
-            setDataEntrada(de);
-        }
+        setDataEntrada(de);
+        
+        setDataSaida(ds);
 
-        if(!ds.empty()){
-            setDataSaida(ds);
-        }
-
-        ofstream arquivo("Estadias.bin", ios::app);
-
-        if(!arquivo.is_open()){
-            cout << "Erro ao abrir o arquivo!" << endl;
-        }
-        else{
-            arquivo << "Codigo Estadia: " << getCodEstadia() << " - Quantidade de Diarias: " << getQtdDiaria() << " - Codigo do Cliente: " << getCodCliente() << " - Data de Entrada: " << getDataEntrada() << " - Data de Saida: " << getDataSaida() << endl;
-            arquivo.close();
-        }
+        calcular_diarias();
     }
 
     void exibirEstadias(){
@@ -260,24 +225,33 @@ public:
         return nmr_quarto;
     }
 
-    void setDataEntrada(string de){
-        this->data_en = de;
+    void setDataEntrada(tm de){
+        this->data_entrada = de;
     }
+
+    tm getDataEntradaTm () {
+        return data_entrada;
+    }
+
+    tm getDataSaidaTm () {
+        return data_saida;
+    }
+
 
     string getDataEntrada(){
         string data_stringada;
-
+        
         data_stringada+=to_string(data_entrada.tm_mday);
         data_stringada+='/';
-        data_stringada+=to_string(data_entrada.tm_mon+1);
+        data_stringada+=to_string(data_entrada.tm_mon);
         data_stringada+='/';
-        data_stringada+=to_string(data_entrada.tm_year+1900);
+        data_stringada+=to_string(data_entrada.tm_year);
 
         return data_stringada;
     }
 
-    void setDataSaida(string ds){
-        this->data_sai = ds;
+    void setDataSaida(tm ds){
+        this->data_saida = ds;
     }
 
     string getDataSaida(){
@@ -285,16 +259,23 @@ public:
 
         data_stringadadois+=to_string(data_saida.tm_mday);
         data_stringadadois+='/';
-        data_stringadadois+=to_string(data_saida.tm_mon+1);
+        data_stringadadois+=to_string(data_saida.tm_mon);
         data_stringadadois+='/';
-        data_stringadadois+=to_string(data_saida.tm_year+1900);
+        data_stringadadois+=to_string(data_saida.tm_year);
 
         return data_stringadadois;
     }
 
-    int calcular_diarias(){
-        int nmr_diarias = (data_saida.tm_mday - data_entrada.tm_mday);
-        return nmr_diarias;
+    void calcular_diarias() {
+        tm data1 = getDataEntradaTm();
+        tm data2 = getDataSaidaTm();
+
+
+        int total1 = data1.tm_mday + (data1.tm_mon * 30) + (data1.tm_year*365);
+        int total2 = data2.tm_mday + (data2.tm_mon * 30) + (data2.tm_year*365);
+    
+
+        setQtdDiaria(abs(total2-total1));
     }
 };
 
@@ -318,18 +299,8 @@ public:
             setValorDiaria(vd);
         }
 
-        if(stats.length() == 11 || stats.length() == 8){
+        if(!stats.empty()){
             setStatus(stats);
-        }
-
-        ofstream arquivo("Quartos.bin", ios::app);
-
-        if(!arquivo.is_open()){
-            cout << "Erro ao abrir o arquivo!" << endl;
-        }
-        else{
-            arquivo << "Quantidade de Hospede: " << getQtdHospede() << " - Numero do Quarto: " << getNmrQuarto() << " - Valor Diaria: " << getValorDiaria() << " - Status: " << getStatus() << endl;
-            arquivo.close();
         }
     }
 
@@ -373,14 +344,12 @@ string cadastrar_cliente(vector<Cliente*>& clientes, int *codigo){
     string telefone;
     
     cout << "Digite o nome do cliente: ";
-    cin >> nome;
     cin.ignore();
+    getline(cin, nome);
     cout << "Digite o endereco do cliente: ";
-    cin >> endereco;
-    cin.ignore();
+    getline(cin, endereco);
     cout << "Digite o telefone do cliente: ";
     cin >> telefone;
-    cin.ignore();
 
     Cliente* cliente = new Cliente(*codigo, nome, endereco, telefone);
     clientes.push_back(cliente);
@@ -394,18 +363,13 @@ string cadastrar_funcionario(vector<Funcionario*>& funcionarios, int *codigo){
     string nome, cargo, telefone;
 
     cout << "Digite o nome do funcionario: ";
-    cin >> nome;
-    cin.ignore();
+    getline(cin, nome);
     cout << "Digite o salario do funcionario: ";
     cin >> salario;
-    cin.ignore();
     cout << "Digite o cargo do funcionario: ";
-    cin >> cargo;
-    cin.ignore();
+    getline(cin, cargo);
     cout << "Digite o telefone do funcionario: ";
     cin >> telefone;
-    cin.ignore();
-
     Funcionario* funcionario =  new Funcionario(*codigo, salario, nome, cargo, telefone);
     funcionarios.push_back(funcionario);
 
@@ -435,11 +399,10 @@ string cadastrar_quarto(vector<Quarto*>& quartos){
 }
 
 string cadastrar_estadia(vector<Estadia*>& estadias, vector<Quarto*>& quartos, vector<Cliente*>& clientes, int *codigo_estadia) {
-    int qtd_diaria = 0;
     int codigo_cliente;
     int nmr_quarto;
-    string data_entrada;
-    string data_saida;
+    tm data_entrada;
+    tm data_saida;
 
     cout << "Digite o codigo do cliente que deseja fazer estadia: ";
     cin >> codigo_cliente;
@@ -473,13 +436,20 @@ string cadastrar_estadia(vector<Estadia*>& estadias, vector<Quarto*>& quartos, v
     }
 
     cout << "Digite a data de entrada para estadia no formato: dd/mm/aaaa): ";
-    cin >> data_entrada;
+    cin >> data_entrada.tm_mday;
+    cin.ignore(); 
+    cin >> data_entrada.tm_mon;
+    cin.ignore();
+    cin >> data_entrada.tm_year;
+
     cout << "Digite a data de saida da estadia estadia no formato: dd/mm/aaaa): ";
-    cin >> data_saida;
+    cin >> data_saida.tm_mday;
+    cin.ignore(); 
+    cin >> data_saida.tm_mon;
+    cin.ignore();
+    cin >> data_saida.tm_year;
     
-    Estadia* estadia;
-    qtd_diaria = estadia->calcular_diarias();
-    estadia = new Estadia(*codigo_estadia, qtd_diaria, codigo_cliente, nmr_quarto, data_entrada, data_saida);
+    Estadia* estadia = new Estadia(*codigo_estadia, codigo_cliente, nmr_quarto, data_entrada, data_saida);
     estadias.push_back(estadia);
 
     for (auto& quarto : quartos) {
@@ -501,7 +471,7 @@ string finalizar_estadia(vector<Estadia*>& estadias, vector<Quarto*> quartos){
     cout << "Digite o codigo da estadia que sera finalizada: ";
     cin >> cod_estadia;
     
-
+    int i = 0;
     for(auto& estadia:estadias){
         if(estadia-> getCodCliente() == cod_cliente && estadia ->getCodEstadia() == cod_estadia){
             int nmr_diarias = estadia->getQtdDiaria(), nmr_quarto = estadia->getNmrQuarto();
@@ -519,9 +489,12 @@ string finalizar_estadia(vector<Estadia*>& estadias, vector<Quarto*> quartos){
 
             cout << "O valor total eh de: " << valot_total << " reais" << endl;
 
-
+            estadias.erase(estadias.begin()+i);
+            
             return "Estadia finalizada com sucesso!\n";
+            break;
         }
+        i++;
     }
 
     return "Estadia nao encontrada para o cliente especificado.\n";
@@ -622,7 +595,6 @@ string mostrar_estadia(vector<Estadia*> estadias){
         if(estadia->getCodCliente() == cod_cliente){
             estadia->exibirEstadias();
             temEstadia= true;
-            break;
         }
     }
 
@@ -682,6 +654,7 @@ int main(){
     do{
     menu();
         cin >> opcao;
+        string x;
         switch (opcao){
         case 1:
             cadastrar_cliente(clientes, &cod);
@@ -693,7 +666,8 @@ int main(){
             cadastrar_quarto(quartos);
             break;
         case 4:
-            cadastrar_estadia(estadias, quartos, clientes, &cod_estadia);
+            x = cadastrar_estadia(estadias, quartos, clientes, &cod_estadia);
+            cout << x;
             break;
         case 5:
             finalizar_estadia(estadias, quartos);
@@ -715,8 +689,69 @@ int main(){
             cout << "Opcao invalida!" << endl;
             break;
         }
+
+
+         
+
         
     }while(opcao != 9);
+
+
+    for (auto& cliente : clientes) {
+        ofstream arquivo("Clientes.bin", ios::app);
+
+        if(!arquivo.is_open())
+            cout << "Erro ao abrir o arquivo!" << endl;
+        
+        else {
+            arquivo << "Codigo: " << cliente->getCodigo() << " - Nome: " << cliente->getNome() << " - Endereco: " << cliente->getEndereco() << " - Telefone: " << cliente->getTelefone() << endl;
+            arquivo.close();
+        }
+        
+    }
+
+    for(auto& funcionario : funcionarios) {
+        ofstream arquivo("Funcionarios.bin", ios::app);
+
+        if(!arquivo.is_open()){
+            cout << "Erro ao abrir o arquivo!" << endl;
+        }
+        else{
+            arquivo << "Codigo: " << funcionario->getCodigo() << " - Salario: " << funcionario->getSalario() << " - Nome: " << funcionario->getNome() << " - Cargo: " << funcionario->getCargo() << " - Telefone: " << funcionario->getTelefone() << endl;
+            arquivo.close();
+        }
+    }
+
+
+
+
+    for (auto& estadia : estadias)
+    {
+        ofstream arquivo("Estadias.bin", ios::app);
+
+        if(!arquivo.is_open()){
+            cout << "Erro ao abrir o arquivo!" << endl;
+        }
+        else{
+            arquivo << "Codigo Estadia: " << estadia->getCodEstadia() << " - Quantidade de Diarias: " << estadia->getQtdDiaria() << " - Codigo do Cliente: " << estadia->getCodCliente() << " - Data de Entrada: " << estadia->getDataEntrada() << " - Data de Saida: " << estadia->getDataSaida() << endl;
+            arquivo.close();
+        }
+    }
+    
+
+    for (auto& quarto : quartos)
+    {
+        ofstream arquivo("Quartos.bin", ios::app);
+
+        if(!arquivo.is_open()){
+            cout << "Erro ao abrir o arquivo!" << endl;
+        }
+        else{
+            arquivo << "Quantidade de Hospede: " << quarto->getQtdHospede() << " - Numero do Quarto: " << quarto->getNmrQuarto() << " - Valor Diaria: " << quarto->getValorDiaria()<<  " - Status: " << quarto->getStatus() << endl;
+            arquivo.close();
+        }
+    }
+    
 
     for (auto cliente : clientes) {
         delete cliente;
